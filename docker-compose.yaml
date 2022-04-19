@@ -1,0 +1,33 @@
+version: "3.3"
+
+services:
+    ngnix_magalu_hotsite:
+        container_name: ngnix_magalu_hotsite
+        build: docker-config/nginx
+        tty: true
+        links:
+        - php_magalu_hotsite
+        ports:
+        - "8013:80"
+        networks: 
+        - app-magalu-network
+        volumes:
+        - ./:/var/www/html
+
+    php_magalu_hotsite:
+        container_name: php_magalu_hotsite
+        image: php_magalu_hotsite
+        stop_signal: SIGTERM
+        build: 
+            context: ./
+            dockerfile: docker-config/app/Dockerfile
+        volumes:
+        - ./:/var/www/html/
+        working_dir: /var/www/html/
+        command: php-fpm
+        networks: 
+        - app-magalu-network
+
+networks:
+  app-magalu-network:
+    driver: bridge
